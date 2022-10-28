@@ -3,25 +3,27 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
 function ChatApp(props) {
-  const [connections, setConnected] = useState({});
+  const [activeSocket, setActiveSocket] = useState();
+  const [activeRoom, setActiveRoom] = useState("")
   const [room, setRoom] = useState("");
 
-  const connectionHandler = _ => {
+  useEffect(() => {
     const url = `http://localhost:4000`;
     const socket = io(url, { autoConnect: false });
-
     socket.connect();
-    socket.on("connect", (socket) => {
-      setConnected(cx => ({
-        ...cx,
-        [room]: true
-      }));
+    socket.on("connect", () => {
+      setActiveSocket(socket);
     });
 
-    socket.emit("join", room);
-
     socket.on("disconnect", () => {
-      console.log("disconnected: ", socket.id);
+      setActiveSocket(null);
+    });
+  }, []);
+
+  const join = _ => {
+    activeSocket.emit("join", room);
+    activeSocket.on(`joined:${activeSocket.id}`, (room) => {
+      setActiveRoom(room);
     });
   }
 
@@ -29,16 +31,24 @@ function ChatApp(props) {
     <>
       <h2>Toy Chat App</h2>
       <div>
+        <span>
+          Status: {activeSocket ? "Connected": "Offline"}
+        </span>
+      </div>
+      <div>
         <input
           name="room"
           type="text"
           onChange={e => setRoom(e.target.value)}
+          placeholder="Room Name"
         />
-        <input type="button" onClick={connectionHandler} value="Join" />
+        <input type="button" onClick={join} value="Join" />
       </div>
-      <span>
-        {connections[room] ? `Joined Room: ${room}` : "Offline"}
-      </span>
+      <div>
+        <span>
+          Active Room: {activeRoom ? activeRoom : ""}
+        </span>
+      </div>
     </>
   );
 }
