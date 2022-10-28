@@ -7,6 +7,7 @@ function ChatApp(props) {
   const [activeRoom, setActiveRoom] = useState("");
   const [room, setRoom] = useState("");
   const [message, setMessage] = useState("");
+  const [chatMessages, addChatMessages] = useState([]);
 
   useEffect(() => {
     const url = `http://localhost:4000`;
@@ -27,8 +28,8 @@ function ChatApp(props) {
       setActiveRoom(room);
     });
     activeSocket.on("message", (message) => {
-      // TODO: display broadcasted message
       console.log("message received: ", message);
+      addChatMessages(messages => [...messages, message]);
     });
   }
 
@@ -65,7 +66,7 @@ function ChatApp(props) {
             <textarea
               name="message"
               rows={5}
-              cols={25}
+              cols={100}
               placeholder="Type message here."
               onChange={e => setMessage(e.target.value)}
               value={message}
@@ -74,6 +75,17 @@ function ChatApp(props) {
           <input type="button" onClick={sendMessage} value="Send Message" />
         </>
       )}
+      <div>
+        <hr/>
+        <h3>Messages from peers</h3>
+        <textarea
+          name="chat-messages"
+          rows={20}
+          cols={100}
+          value={chatMessages.join("\n")}
+          readOnly
+        />
+      </div>
     </>
   );
 }
