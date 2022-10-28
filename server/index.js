@@ -18,8 +18,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on("message", (room, message) => {
-    console.log(`[MESSAGE] room: ${room}, message: ${message}`);
-    socket.to(room).emit(`message:${room}`, message);
+    console.log(`[MESSAGE] socket: ${socket.id}, room: ${room}, message: ${message}`);
+    socket.to(room).emit("message", message);
   });
 });
 

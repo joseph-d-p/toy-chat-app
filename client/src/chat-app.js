@@ -26,10 +26,14 @@ function ChatApp(props) {
     activeSocket.on(`joined:${activeSocket.id}`, (room) => {
       setActiveRoom(room);
     });
+    activeSocket.on("message", (message) => {
+      // TODO: display broadcasted message
+      console.log("message received: ", message);
+    });
   }
 
   const sendMessage = _ => {
-    activeSocket.emit("message", room, message);
+    activeSocket.emit("message", activeRoom, message);
     setMessage("");
   }
 
@@ -64,6 +68,7 @@ function ChatApp(props) {
               cols={25}
               placeholder="Type message here."
               onChange={e => setMessage(e.target.value)}
+              value={message}
             />
           </div>
           <input type="button" onClick={sendMessage} value="Send Message" />
