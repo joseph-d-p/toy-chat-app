@@ -9,6 +9,12 @@ const io = require("socket.io")(server, {
 
 io.on('connection', (socket) => {
   console.log('Connected: ', socket.id);
+
+  // Join room
+  socket.on("join", (room) => {
+    console.log(socket.id, ", room: ", room);
+    socket.join(room);
+  });
 });
 
 server.listen(4000, () => {
