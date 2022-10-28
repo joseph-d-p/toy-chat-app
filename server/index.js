@@ -12,13 +12,13 @@ io.on('connection', (socket) => {
 
   // Join room
   socket.on("join", (room) => {
-    console.log(`[JOIN: ${socket.id}] room: ${room}`);
+    console.log(`[JOIN]: socket: ${socket.id}, room: ${room}`);
     socket.join(room);
     socket.emit(`joined:${socket.id}`, room); // ACK join room
   });
 
   socket.on("message", (room, message) => {
-    console.log(`[MESSAGE: ${room}] message`);
+    console.log(`[MESSAGE] room: ${room}, message: ${message}`);
     socket.to(room).emit(`message:${room}`, message);
   });
 });
