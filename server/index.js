@@ -16,6 +16,11 @@ io.on('connection', (socket) => {
     socket.join(room);
     socket.emit(`joined:${socket.id}`, room); // ACK join room
   });
+
+  socket.on("message", (room, message) => {
+    console.log(`[MESSAGE: ${room}] message`);
+    socket.to(room).emit(`message:${room}`, message);
+  });
 });
 
 server.listen(4000, () => {

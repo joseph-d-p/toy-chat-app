@@ -4,8 +4,9 @@ import io from "socket.io-client";
 
 function ChatApp(props) {
   const [activeSocket, setActiveSocket] = useState();
-  const [activeRoom, setActiveRoom] = useState("")
+  const [activeRoom, setActiveRoom] = useState("");
   const [room, setRoom] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const url = `http://localhost:4000`;
@@ -25,6 +26,11 @@ function ChatApp(props) {
     activeSocket.on(`joined:${activeSocket.id}`, (room) => {
       setActiveRoom(room);
     });
+  }
+
+  const sendMessage = _ => {
+    activeSocket.emit("message", room, message);
+    setMessage("");
   }
 
   return (
@@ -49,6 +55,20 @@ function ChatApp(props) {
           Active Room: {activeRoom ? activeRoom : ""}
         </span>
       </div>
+      {activeRoom && (
+        <>
+          <div>
+            <textarea
+              name="message"
+              rows={5}
+              cols={25}
+              placeholder="Type message here."
+              onChange={e => setMessage(e.target.value)}
+            />
+          </div>
+          <input type="button" onClick={sendMessage} value="Send Message" />
+        </>
+      )}
     </>
   );
 }
